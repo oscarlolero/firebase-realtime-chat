@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "52776598289",
+    "project_id": "java-chat-app-cfbf5",
+    "storage_bucket": "java-chat-app-cfbf5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52776598289:android:9afa2722776a5ad3bfeab0",
+        "android_client_info": {
+          "package_name": "com.oscarlolero.firebaserealtimechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "52776598289-6songv01kfqgfem1e6ja5g8s5nplrmga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWD-u78PRH4m4ulN_iNA-x7oPmMmpW1R8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "52776598289-6songv01kfqgfem1e6ja5g8s5nplrmga.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
