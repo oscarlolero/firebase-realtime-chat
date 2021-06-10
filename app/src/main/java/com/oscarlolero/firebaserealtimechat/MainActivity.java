@@ -1,7 +1,5 @@
 package com.oscarlolero.firebaserealtimechat;
 
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -44,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 goToHome();
                 // ...
             } else {
-                Toast.makeText(MainActivity.this, response.getError().getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
                 // response.getError().getErrorCode() and handle the error.
