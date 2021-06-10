@@ -28,6 +28,7 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_FirebaseRealtimeChatWithActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
