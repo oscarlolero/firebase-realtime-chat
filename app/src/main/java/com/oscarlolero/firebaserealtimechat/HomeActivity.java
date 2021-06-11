@@ -10,11 +10,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,7 +20,13 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.oscarlolero.firebaserealtimechat.adapters.PagesAdapter;
+import com.oscarlolero.firebaserealtimechat.pojos.User;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,12 +34,50 @@ import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity {
 
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference refUser = database.getReference("Users").child(user.getUid());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.Theme_FirebaseRealtimeChatWithActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        setupTabLayout();
+        singleUser();
+
+    }
+
+    private void singleUser() {
+        refUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    User userFirebase = new User(
+                            user.getUid(),
+                            user.getDisplayName(),
+                            user.getEmail(),
+                            Objects.requireNonNull(user.getPhotoUrl()).toString(),
+                            "OFFLINE",
+                            "11/06/2021",
+                            "01:15pm",
+                            0,
+                            0
+                    );
+                    refUser.setValue(userFirebase);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void setupTabLayout() {
         ViewPager2 viewPager2 = findViewById(R.id.viewPager);
         viewPager2.setAdapter(new PagesAdapter(this));
 
@@ -78,9 +119,6 @@ public class HomeActivity extends AppCompatActivity {
                 badgeDrawable.setVisible(false);
             }
         });
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
     }
 
     @Override
