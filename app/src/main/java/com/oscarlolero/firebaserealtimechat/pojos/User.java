@@ -1,5 +1,7 @@
 package com.oscarlolero.firebaserealtimechat.pojos;
 
+import java.util.HashMap;
+
 public class User {
 
     private String id;
@@ -11,6 +13,7 @@ public class User {
     private String time;
     private int requests;
     private int newMessage;
+    private HashMap<String, HashMap<String, String>> pendingRequests;
 
     public User() {
     }
@@ -25,6 +28,14 @@ public class User {
         this.time = time;
         this.requests = requests;
         this.newMessage = newMessage;
+    }
+
+    public HashMap<String, HashMap<String, String>> getPendingRequests() {
+        return pendingRequests;
+    }
+
+    public void setPendingRequests(HashMap<String, HashMap<String, String>> pendingRequests) {
+        this.pendingRequests = pendingRequests;
     }
 
     public String getId() {

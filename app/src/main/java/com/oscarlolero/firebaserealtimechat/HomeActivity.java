@@ -36,7 +36,8 @@ public class HomeActivity extends AppCompatActivity {
 
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference refUser = database.getReference("Users").child(user.getUid());
+    DatabaseReference defaultUserRef = database.getReference("Users").child(user.getUid());
+    DatabaseReference defaultUserRequestsCountRef = database.getReference("Users").child(user.getUid()).child("requests");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void singleUser() {
-        refUser.addListenerForSingleValueEvent(new ValueEventListener() {
+        defaultUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
@@ -65,7 +66,7 @@ public class HomeActivity extends AppCompatActivity {
                             0,
                             0
                     );
-                    refUser.setValue(userFirebase);
+                    defaultUserRef.setValue(userFirebase);
                 }
             }
 
@@ -97,10 +98,28 @@ public class HomeActivity extends AppCompatActivity {
                     case 2:
                         tab.setText("Requests");
                         tab.setIcon(R.drawable.ic_requests);
-                        BadgeDrawable badgeDrawable = tab.getOrCreateBadge();
-                        badgeDrawable.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
-                        badgeDrawable.setVisible(true);
-                        badgeDrawable.setNumber(1);
+
+                        defaultUserRequestsCountRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                if(snapshot.exists()) {
+                                    BadgeDrawable badgeDrawable = tab.getOrCreateBadge();
+                                    Integer count = snapshot.getValue(Integer.class);
+                                    if(count == null || count == 0) {
+                                        badgeDrawable.setVisible(false);
+                                    } else {
+                                        badgeDrawable.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                                        badgeDrawable.setNumber(count);
+                                        badgeDrawable.setVisible(true);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
                         break;
                     case 3:
                         tab.setText("My requests");
@@ -115,8 +134,28 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                BadgeDrawable badgeDrawable = Objects.requireNonNull(tabLayout.getTabAt(position)).getOrCreateBadge();
-                badgeDrawable.setVisible(false);
+                if(position == 2) {
+                    BadgeDrawable badgeDrawable = Objects.requireNonNull(tabLayout.getTabAt(position)).getOrCreateBadge();
+                    resetPendingRequests(badgeDrawable);
+                }
+            }
+        });
+    }
+
+    private void resetPendingRequests(BadgeDrawable badgeDrawable) {
+        defaultUserRequestsCountRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if(snapshot.exists()) {
+                    badgeDrawable.setVisible(false);
+                    defaultUserRequestsCountRef.setValue(0);
+                    Toast.makeText(HomeActivity.this, "Counter resetted", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
             }
         });
     }

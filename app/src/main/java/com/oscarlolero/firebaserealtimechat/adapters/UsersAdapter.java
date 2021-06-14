@@ -69,7 +69,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.viewHolderAd
     }
 
     private void setupDefaultUserButtons(@NotNull viewHolderAdapter holder, User userFromList) {
-        DatabaseReference buttonsRef = database.getReference("Users").child(defaultUser.getUid()).child("Requests").child(userFromList.getId());
+        DatabaseReference buttonsRef = database.getReference("Users").child(defaultUser.getUid()).child("pendingRequests").child(userFromList.getId());
         buttonsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
@@ -115,7 +115,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.viewHolderAd
 
     private void updateSendRequestAction(@NotNull viewHolderAdapter holder, User userFromList, Vibrator vibrator) {
         holder.btnSendRequest.setOnClickListener(v -> {
-            DatabaseReference defaultAppUser = database.getReference("Users").child(defaultUser.getUid()).child("Requests");
+            DatabaseReference defaultAppUser = database.getReference("Users").child(defaultUser.getUid()).child("pendingRequests");
             defaultAppUser.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
@@ -128,7 +128,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.viewHolderAd
                 }
             });
 
-            DatabaseReference newFriendUser = database.getReference("Users").child(userFromList.getId()).child("Requests");
+            DatabaseReference newFriendUser = database.getReference("Users").child(userFromList.getId()).child("pendingRequests");
             newFriendUser.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
@@ -141,7 +141,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.viewHolderAd
                 }
             });
 
-            DatabaseReference requestsCount = database.getReference("Users").child(userFromList.getId()).child("pendingRequests");
+            DatabaseReference requestsCount = database.getReference("Users").child(userFromList.getId()).child("requests");
             requestsCount.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
