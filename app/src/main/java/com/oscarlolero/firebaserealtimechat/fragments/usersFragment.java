@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,14 +34,24 @@ import java.util.ArrayList;
 
 public class usersFragment extends Fragment {
 
+    View view;
+    FirebaseUser user;
+
     @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        View view = inflater.inflate(R.layout.fragment_users, container, false);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        view = inflater.inflate(R.layout.fragment_users, container, false);
 
+        loadDefaultUser(user);
+        loadAndShowUsers();
+
+        return view;
+    }
+
+    private void loadDefaultUser(FirebaseUser user) {
         TextView tvUser = view.findViewById(R.id.tvUser);
         ImageView imgUser = view.findViewById(R.id.imgUser);
 
@@ -48,7 +59,10 @@ public class usersFragment extends Fragment {
         tvUser.setText(user.getDisplayName() + " (you)");
 
         Glide.with(this).load(user.getPhotoUrl()).into(imgUser);
+    }
 
+    private void loadAndShowUsers() {
+        ProgressBar progressBar;
         RecyclerView recyclerView;
         ArrayList<User> userArrayList;
         UsersAdapter usersAdapter;
@@ -60,6 +74,7 @@ public class usersFragment extends Fragment {
         userArrayList = new ArrayList<>();
         usersAdapter = new UsersAdapter(userArrayList, getContext());
         recyclerView.setAdapter(usersAdapter);
+        progressBar = view.findViewById(R.id.progress_bar);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("Users");
@@ -76,6 +91,8 @@ public class usersFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "No users found!", Toast.LENGTH_SHORT).show();
                 }
+                recyclerView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -83,7 +100,5 @@ public class usersFragment extends Fragment {
 
             }
         });
-
-        return view;
     }
 }
